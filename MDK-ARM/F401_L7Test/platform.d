@@ -33,3 +33,5 @@ f401_l7test\platform.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 f401_l7test\platform.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
 f401_l7test\platform.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h
 f401_l7test\platform.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
+f401_l7test\platform.o: ../Core/Inc/main.h
+f401_l7test\platform.o: ../Core/Inc/i2c.h

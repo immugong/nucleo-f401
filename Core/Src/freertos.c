@@ -72,8 +72,8 @@ osThreadId DebugTaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-void get_data_by_polling(VL53L7CX_Configuration *p_dev);
-void get_data_by_interrupt(VL53L7CX_Configuration *p_dev);
+void get_data_by_polling(void);
+void get_data_by_interrupt(void);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
@@ -231,14 +231,30 @@ void StratToFTask(void const * argument)
 {
   /* USER CODE BEGIN StratToFTask */
   /* Infinite loop */
-
   /*********************************/
 	/*         Ranging loop          */
 	/*********************************/
-  printf("Ranging starts\r\n");
-	status = vl53l7cx_start_ranging(&Dev);
+  // 条件调用传感器开始测距API，适配L7/L8
+  printf("ToF Ranging starts...\r\n");
+  #if USE_VL53L7
+  status = vl53l7cx_start_ranging(&Dev);
+  #else
+  status = vl53l8cx_start_ranging(&Dev);
+  #endif
   
-  get_data_by_polling(&Dev);
+  // 调用统一的轮询数据采集函数
+  if(status == 0)
+  {
+    get_data_by_polling();
+  }
+  else
+  {
+    printf("ToF start ranging failed ! Err code: %d\r\n", status);
+    while(1)
+    {
+      osDelay(1000);
+    }
+  }
   /* USER CODE END StratToFTask */
 }
 
@@ -262,33 +278,57 @@ void StartDebugTask(void const * argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-void get_data_by_polling(VL53L7CX_Configuration *p_dev){
+/**
+ * @brief  统一轮询数据采集函数，自动适配VL53L7CX/VL53L8CX
+ * @note   无需传参，直接调用全局Dev/Results结构体，与宏USE_VL53L7联动
+ * @retval 无
+ */
+void get_data_by_polling(void){
 	do
 	{
+    // 条件检查数据就绪状态
+    #if USE_VL53L7
 		status = vl53l7cx_check_data_ready(&Dev, &p_data_ready);
-		if(p_data_ready){
-			status = vl53l7cx_get_resolution(p_dev, &resolution);
-			status = vl53l7cx_get_ranging_data(p_dev, &Results);
-
+    #else
+    status = vl53l8cx_check_data_ready(&Dev, &p_data_ready);
+    #endif
+		
+		if(p_data_ready && status == 0){
+      // 条件获取传感器分辨率
+      #if USE_VL53L7
+			status = vl53l7cx_get_resolution(&Dev, &resolution);
+			status = vl53l7cx_get_ranging_data(&Dev, &Results);
+      #else
+      status = vl53l8cx_get_resolution(&Dev, &resolution);
+      status = vl53l8cx_get_ranging_data(&Dev, &Results);
+      #endif
+			
+			// 循环读取各区域测距数据，兼容L7/L8的分辨率输出
 			for(int i = 0; i < resolution;i++){
 				/* Print per zone results */
 				printf("Zone : %2d, Nb targets : %2u, Ambient : %4lu Kcps/spads, ",
 						i,
 						Results.nb_target_detected[i],
 						Results.ambient_per_spad[i]);
-
 				/* Print per target results */
 				if(Results.nb_target_detected[i] > 0){
+          // 条件使用对应传感器的单区域目标数宏
+          #if USE_VL53L7
 					printf("Target status : %3u, Distance : %4d mm\r\n",
 							Results.target_status[VL53L7CX_NB_TARGET_PER_ZONE * i],
 							Results.distance_mm[VL53L7CX_NB_TARGET_PER_ZONE * i]);
+          #else
+          printf("Target status : %3u, Distance : %4d mm\r\n",
+              Results.target_status[VL53L8CX_NB_TARGET_PER_ZONE * i],
+              Results.distance_mm[VL53L8CX_NB_TARGET_PER_ZONE * i]);
+          #endif
 				}else{
 					printf("Target status : 255, Distance : No target\r\n");
 				}
 			}
 			printf("\r\n");
 		}else{
-			HAL_Delay(5);
+			osDelay(5); // 替换HAL_Delay为osDelay，适配FreeRTOS延时
 		}
 	}
 	while(1);

@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F401xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../VL53L7CX_ULD_API/inc;../Platform;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../PS2/Crtl</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../VL53L7CX_ULD_API/inc;../Platform;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../PS2/Crtl;..\VL53L8CX_ULD_API\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -559,6 +559,26 @@
               <FileName>stm32f4xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f4xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>vl53l8cx_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\VL53L8CX_ULD_API\src\vl53l8cx_api.c</FilePath>
+            </File>
+            <File>
+              <FileName>vl53l8cx_plugin_detection_thresholds.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\VL53L8CX_ULD_API\src\vl53l8cx_plugin_detection_thresholds.c</FilePath>
+            </File>
+            <File>
+              <FileName>vl53l8cx_plugin_motion_indicator.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\VL53L8CX_ULD_API\src\vl53l8cx_plugin_motion_indicator.c</FilePath>
+            </File>
+            <File>
+              <FileName>vl53l8cx_plugin_xtalk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\VL53L8CX_ULD_API\src\vl53l8cx_plugin_xtalk.c</FilePath>
             </File>
           </Files>
         </Group>
