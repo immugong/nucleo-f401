@@ -51,6 +51,9 @@ f401_l7test\main.o: ../Core/Inc/spi.h
 f401_l7test\main.o: ../Core/Inc/usart.h
 f401_l7test\main.o: ../Core/Inc/gpio.h
 f401_l7test\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+f401_l7test\main.o: ..\shell\shell_port.h
+f401_l7test\main.o: ..\shell\shell.h
+f401_l7test\main.o: ..\shell\shell_cfg.h
 f401_l7test\main.o: ..\VL53L8CX_ULD_API\inc\vl53l8cx_api.h
 f401_l7test\main.o: ../Core/Inc/platform.h
 f401_l7test\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

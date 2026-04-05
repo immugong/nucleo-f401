@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "shell_port.h"
 // 核心区分宏：1=VL53L7CX，0=VL53L8CX，一键切换
 #define USE_VL53L7 0
 
@@ -134,14 +135,18 @@ uint8_t VL53LX_Sensor_Init(void)
 	// 4. 打印初始化成功信息及API版本
 	#if USE_VL53L7
 	printf("VL53L7CX ULD ready ! (Version : %s)\r\n", VL53L7CX_API_REVISION);
-	// 5. 配置L7测距参数：2Hz频率 + 连续测距模式
-	init_status = vl53l7cx_set_ranging_frequency_hz(&Dev, 2);
+	// 配置L7：64分辨率(8x8) → 2Hz频率 → 连续测距
+	init_status = vl53l7cx_set_resolution(&Dev, VL53L7CX_RESOLUTION_8X8);
+	if(init_status == 0)
+		init_status = vl53l7cx_set_ranging_frequency_hz(&Dev, 2);
 	if(init_status == 0)
 		init_status = vl53l7cx_set_ranging_mode(&Dev, VL53L7CX_RANGING_MODE_CONTINUOUS);
 	#else
 	printf("VL53L8CX ULD ready ! (Version : %s)\r\n", VL53L8CX_API_REVISION);
-	// 5. 配置L8测距参数：2Hz频率 + 连续测距模式
-	init_status = vl53l8cx_set_ranging_frequency_hz(&Dev, 2);
+	// 配置L8：64分辨率(8x8) → 2Hz频率 → 连续测距（核心新增）
+	init_status = vl53l8cx_set_resolution(&Dev, VL53L8CX_RESOLUTION_4X4);
+	if(init_status == 0)
+		init_status = vl53l8cx_set_ranging_frequency_hz(&Dev, 1);
 	if(init_status == 0)
 		init_status = vl53l8cx_set_ranging_mode(&Dev, VL53L8CX_RANGING_MODE_CONTINUOUS);
 	#endif
@@ -188,6 +193,7 @@ int main(void)
   MX_I2C2_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
+  /*
   int set_Value = 0;
   uint8_t sensor_init_ret = 0;
   
@@ -198,8 +204,10 @@ int main(void)
   	printf("VL53LX Sensor Init Total Failed ! Ret: %d\r\n", sensor_init_ret);
   	return sensor_init_ret; // 初始化失败，退出主函数
   }
-  printf("VL53LX Sensor Init All Success !\r\n");
+  printf("VL53LX Sensor Init All Success !\r\n");*/
   /* USER CODE END 2 */
+
+  userShellInit();
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
   /* Start scheduler */
