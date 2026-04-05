@@ -1,7 +1,7 @@
 f401_l7test\vl53l8cx_api.o: ..\VL53L8CX_ULD_API\src\vl53l8cx_api.c
 f401_l7test\vl53l8cx_api.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 f401_l7test\vl53l8cx_api.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-f401_l7test\vl53l8cx_api.o: ..\VL53L8CX_ULD_API\inc\vl53l8cx_api.h
+f401_l7test\vl53l8cx_api.o: ../VL53L8CX_ULD_API/inc/vl53l8cx_api.h
 f401_l7test\vl53l8cx_api.o: ../Core/Inc/platform.h
 f401_l7test\vl53l8cx_api.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 f401_l7test\vl53l8cx_api.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
@@ -35,4 +35,4 @@ f401_l7test\vl53l8cx_api.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pw
 f401_l7test\vl53l8cx_api.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
 f401_l7test\vl53l8cx_api.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h
 f401_l7test\vl53l8cx_api.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-f401_l7test\vl53l8cx_api.o: ..\VL53L8CX_ULD_API\inc\vl53l8cx_buffers.h
+f401_l7test\vl53l8cx_api.o: ../VL53L8CX_ULD_API/inc/vl53l8cx_buffers.h

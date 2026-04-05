@@ -1,7 +1,7 @@
 f401_l7test\vl53l8cx_plugin_motion_indicator.o: ..\VL53L8CX_ULD_API\src\vl53l8cx_plugin_motion_indicator.c
 f401_l7test\vl53l8cx_plugin_motion_indicator.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
-f401_l7test\vl53l8cx_plugin_motion_indicator.o: ..\VL53L8CX_ULD_API\inc\vl53l8cx_plugin_motion_indicator.h
-f401_l7test\vl53l8cx_plugin_motion_indicator.o: ..\VL53L8CX_ULD_API\inc\vl53l8cx_api.h
+f401_l7test\vl53l8cx_plugin_motion_indicator.o: ../VL53L8CX_ULD_API/inc/vl53l8cx_plugin_motion_indicator.h
+f401_l7test\vl53l8cx_plugin_motion_indicator.o: ../VL53L8CX_ULD_API/inc/vl53l8cx_api.h
 f401_l7test\vl53l8cx_plugin_motion_indicator.o: ../Core/Inc/platform.h
 f401_l7test\vl53l8cx_plugin_motion_indicator.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 f401_l7test\vl53l8cx_plugin_motion_indicator.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

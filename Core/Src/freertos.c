@@ -131,8 +131,8 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of PS2Task */
-  //osThreadDef(PS2Task, StartPS2Task, osPriorityIdle, 0, 128);
-  //PS2TaskHandle = osThreadCreate(osThread(PS2Task), NULL);
+  osThreadDef(PS2Task, StartPS2Task, osPriorityIdle, 0, 128);
+  PS2TaskHandle = osThreadCreate(osThread(PS2Task), NULL);
 
   /* definition and creation of ToFTask */
   osThreadDef(ToFTask, StratToFTask, osPriorityIdle, 0, 128);
