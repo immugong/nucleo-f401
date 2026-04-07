@@ -175,7 +175,7 @@ static uint8_t VL53LX_Sensor_Init(void)
     if (init_status == 0)
         init_status = vl53l7cx_set_ranging_mode(&Dev, VL53L7CX_RANGING_MODE_CONTINUOUS);
 #else
-    init_status = vl53l8cx_set_resolution(&Dev, VL53L8CX_RESOLUTION_4X4);
+    init_status = vl53l8cx_set_resolution(&Dev, VL53L8CX_RESOLUTION_8X8);
     if (init_status == 0)
         init_status = vl53l8cx_set_ranging_frequency_hz(&Dev, 1);
     if (init_status == 0)

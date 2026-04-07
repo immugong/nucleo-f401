@@ -28,14 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "shell_port.h"
-// 核心区分宏：1=VL53L7CX，0=VL53L8CX，一键切换
-#define USE_VL53L7 0
-
-#if USE_VL53L7
-#include "vl53l7cx_api.h"
-#else
-#include "vl53l8cx_api.h"
-#endif
+#include "tof_port.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,13 +37,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define is_interrupt 0 /*is_interrupt = 1 => 中断获取数据, = 0 => 轮询获取数据 */
-// 统一I2C地址宏，适配两款传感器
-#if USE_VL53L7
-#define VL53LX_DEFAULT_I2C_ADDRESS VL53L7CX_DEFAULT_I2C_ADDRESS
-#else
-#define VL53LX_DEFAULT_I2C_ADDRESS VL53L8CX_DEFAULT_I2C_ADDRESS
-#endif
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -60,19 +47,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint8_t 				status, loop, isAlive, isReady;
-volatile int IntCount;
-uint8_t p_data_ready;
-// 条件定义传感器配置/结果结构体，适配L7/L8
-#if USE_VL53L7
-VL53L7CX_Configuration 	Dev;
-VL53L7CX_ResultsData 	Results;
-#else
-VL53L8CX_Configuration 	Dev;
-VL53L8CX_ResultsData 	Results;
-#endif
-uint8_t resolution;
-uint16_t idx;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -85,96 +60,8 @@ uint8_t VL53LX_Sensor_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-	if (GPIO_Pin==INT_C_Pin)
-	{
-		IntCount++;
-	}
-}
 
-// 独立封装：VL53LX传感器初始化函数（适配L7/L8）
-uint8_t VL53LX_Sensor_Init(void)
-{
-	uint8_t init_status = 0;
-	// 配置传感器I2C地址
-	Dev.platform.address = VL53LX_DEFAULT_I2C_ADDRESS;
-	
-	// 1. 检测传感器是否在线
-	#if USE_VL53L7
-	init_status = vl53l7cx_is_alive(&Dev, &isAlive);
-	#else
-  VL53L8CX_Reset_Sensor(&(Dev.platform));
-	init_status = vl53l8cx_is_alive(&Dev, &isAlive);
-	#endif
-	if(!isAlive || init_status != 0)
-	{
-		#if USE_VL53L7
-		printf("VL53L7CX not detected at address (0x%x)\r\n", Dev.platform.address);
-		#else
-		printf("VL53L8CX not detected at address (0x%x)\r\n", Dev.platform.address);
-		#endif
-		return 0xFF; // 传感器未检测到，返回错误码
-	}
-	
-	// 2. 打印初始化提示
-	#if USE_VL53L7
-	printf("VL53L7CX Sensor initializing, please wait few seconds\r\n");
-	#else
-	printf("VL53L8CX Sensor initializing, please wait few seconds\r\n");
-	#endif
-	
-	// 3. 传感器底层初始化
-	#if USE_VL53L7
-	init_status = vl53l7cx_init(&Dev);
-	#else
-	init_status = vl53l8cx_init(&Dev);
-	#endif
-	if(init_status != 0)
-	{
-		#if USE_VL53L7
-		printf("VL53L7CX ULD Loading failed, err code: %d\r\n", init_status);
-		#else
-		printf("VL53L8CX ULD Loading failed, err code: %d\r\n", init_status);
-		#endif
-		return init_status; // 返回初始化错误码
-	}
-	
-	// 4. 打印初始化成功信息及API版本
-	#if USE_VL53L7
-	printf("VL53L7CX ULD ready ! (Version : %s)\r\n", VL53L7CX_API_REVISION);
-	// 配置L7：64分辨率(8x8) → 2Hz频率 → 连续测距
-	init_status = vl53l7cx_set_resolution(&Dev, VL53L7CX_RESOLUTION_8X8);
-	if(init_status == 0)
-		init_status = vl53l7cx_set_ranging_frequency_hz(&Dev, 2);
-	if(init_status == 0)
-		init_status = vl53l7cx_set_ranging_mode(&Dev, VL53L7CX_RANGING_MODE_CONTINUOUS);
-	#else
-	printf("VL53L8CX ULD ready ! (Version : %s)\r\n", VL53L8CX_API_REVISION);
-	// 配置L8：64分辨率(8x8) → 2Hz频率 → 连续测距（核心新增）
-	init_status = vl53l8cx_set_resolution(&Dev, VL53L8CX_RESOLUTION_4X4);
-	if(init_status == 0)
-		init_status = vl53l8cx_set_ranging_frequency_hz(&Dev, 1);
-	if(init_status == 0)
-		init_status = vl53l8cx_set_ranging_mode(&Dev, VL53L8CX_RANGING_MODE_CONTINUOUS);
-	#endif
-	
-	// 6. 测距参数配置错误判断
-	if(init_status != 0)
-	{
-		#if USE_VL53L7
-		printf("VL53L7CX Param Config failed, err code: %d\r\n", init_status);
-		#else
-		printf("VL53L8CX Param Config failed, err code: %d\r\n", init_status);
-		#endif
-	}
-	else
-	{
-		printf("VL53LX Ranging Param Config Success !\r\n");
-	}
-	
-	return init_status; // 返回最终初始化状态（0=成功，非0=失败）
-}
+
 /* USER CODE END 0 */
 
 /**
@@ -209,18 +96,8 @@ int main(void)
   MX_I2C2_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-  /*
-  int set_Value = 0;
-  uint8_t sensor_init_ret = 0;
   
-  // 调用独立的传感器初始化函数
-  sensor_init_ret = VL53LX_Sensor_Init();
-  if(sensor_init_ret != 0)
-  {
-  	printf("VL53LX Sensor Init Total Failed ! Ret: %d\r\n", sensor_init_ret);
-  	return sensor_init_ret; // 初始化失败，退出主函数
-  }
-  printf("VL53LX Sensor Init All Success !\r\n");*/
+  TOF_Init();
 
   userShellInit();
   /* USER CODE END 2 */
